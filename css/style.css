@@ -18,6 +18,10 @@ textarea {
   border: 1px solid rgb(192, 192, 192);
 }
 
+li {
+  list-style: none;
+}
+
 .reply {
   text-align: right;
 }
@@ -31,8 +35,6 @@ textarea {
   margin: 4px;
 }
 
-p #result {
-  text-align: right;
-  font-size: 25px;
-  margin-top: 10px;
+#replyfrm {
+  background: white;
 }

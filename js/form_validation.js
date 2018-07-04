@@ -3,23 +3,32 @@ const validateEmail = email => {
   return re.test(email);
 };
 
-const validate = () => {
-  let $result = $("#result"),
+const validate = (isReply) => {
+
+  let result, email, name, message;
+
+  result = $("#resultr"),
+  email = $("#emailr").val(),
+  name = $("#namer").val(),
+  message = $("#messager").val();
+
+  if(!isReply){
+    result = $("#result"),
     email = $("#email").val(),
     name = $("#name").val(),
     message = $("#message").val();
+  }
 
-  $result.text("");
+  result.text("");
 
   if (email == "" || name == "" || message == "") {
-    $result.text("All of the text fields must be filled");
-    $result.css("color", "red");
+    result.text("All of the text fields must be filled");
+    result.css("color", "red");
   } else if (!validateEmail(email)) {
-    $result.text(email + " is not a valid email adress");
-    $result.css("color", "red");
+    result.text(email + " is not a valid email adress");
+    result.css("color", "red");
   } else {
     return true;
   }
   return false;
 };
-
