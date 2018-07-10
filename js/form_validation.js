@@ -7,15 +7,15 @@ const validate = (isReply) => {
 
   let result, email, name, message;
 
-  result = $("#resultr"),
-  email = $("#emailr").val(),
-  name = $("#namer").val(),
+  result  = $("#resultr"),
+  email   = $("#emailr").val(),
+  name    = $("#namer").val(),
   message = $("#messager").val();
 
   if(!isReply){
-    result = $("#result"),
-    email = $("#email").val(),
-    name = $("#name").val(),
+    result  = $("#result"),
+    email   = $("#email").val(),
+    name    = $("#name").val(),
     message = $("#message").val();
   }
 

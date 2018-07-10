@@ -1,4 +1,4 @@
-let oldid = 0; //Reply form state
+let oldActiveFormId = 0; //Setting initial old active reply form id as 0 
 
 const commentSizePlural = size => {
   if (size == 1) {
@@ -8,17 +8,18 @@ const commentSizePlural = size => {
 
 const reloadComments = () => {
   $.post("./db/db_get_comments.php", all_data => {
+
     const data = JSON.parse(all_data);
-    let comments = "",
-        list = $("<ul class='outer-comment'>"),
-        item = $("<li>").html(comments);
+    let comments = "", reply_list ,
+        list     = $("<ul class='outer-comment'>"),
+        item     = $("<li>").html(comments);
 
     $("#comquant").html(commentSizePlural(data.length));
 
     for (let i = 0; i < data.length; i++) {
       if (data[i]["parent_id"] == "0") {
         comments =
-          "<div class='back'>" +
+        "<div class='back'>" +
             "<div class='row pt-4 pl-4 pr-4 mt-3'>" +
                 "<div class='col'>" +
                     "<b>" + data[i]["name"] + "</b>" +
@@ -32,12 +33,12 @@ const reloadComments = () => {
                 "<div class='col'>" +
                 "<p>" + data[i]["message"] + "</p>" + 
             "</div>" + 
-          "</div>"+
-          "<div class='pt-3' id='replybox" + data[i]["id"] + "'></div>";
+        "</div>"+
+        "<div class='pt-3' id='replybox" + data[i]["id"] + "'></div>";
+
         item = $("<li>").append(comments);
         list.append(item);
-
-        let reply_list = $('<ul>');
+        reply_list = $('<ul>');
         item.append(reply_list);
         reloadReplies(data[i]["id"], data, list);
       }
@@ -59,7 +60,6 @@ const addComment = (isReply , parentid) => {
     data: dat,
     type: "post",
     success: function(response) {
-      let result = eval("(" + response + ")");
       if (response) {
         if(isReply){
             $("#namer").val("");
@@ -80,7 +80,7 @@ const addComment = (isReply , parentid) => {
 };
 
 const reloadReplies = (id, data, list) => {
-    oldid = 0;
+    oldActiveFormId = 0;
     for (let i = 0; (i < data.length); i++)
     {
         if (id == data[i]["parent_id"])
@@ -107,46 +107,45 @@ const reloadReplies = (id, data, list) => {
     }
 }
 
-
 const reply = (id) => {
-
-    const its =  
+   
+    const ReplyForm =  
     "<form class='pt-3' id='replyfrm' action='./db/db_add_comment.php' method='post'>" +
-    "<div class='container'>"+
-        "<div class='row'>"+
-            "<div class='col-md-2 mt-2'>"+
-                "<label for='emailr'>Email*</label>"+
+        "<div class='container'>"+
+            "<div class='row'>"+
+                "<div class='col-md-2 mt-2'>"+
+                    "<label for='emailr'>Email*</label>"+
+                "</div>"+
+                "<div class='col-sm-12 col-md-5'>"+
+                    "<input name='email' style='width: 100%' type='text' id='emailr'>"+
+                "</div>"+
+                "<div class='col-md-1 mt-2'>"+
+                    "<label for='namer'>Name*</label>"+
+                "</div>"+
+                "<div class='col-sm-12 col-md-4'>"+
+                    "<input name='name' style='width: 100%' type='text' id='namer'>"+
             "</div>"+
-            "<div class='col-sm-12 col-md-5'>"+
-                "<input name='email' style='width: 100%' type='text' id='emailr'>"+
             "</div>"+
-            "<div class='col-md-1 mt-2'>"+
-                "<label for='namer'>Name*</label>"+
+            "<div class='row'>"+
+                "<div class='col-md-2 mt-2'>"+
+                    "<label for='messager'>Message*</label>"+
+                "</div>"+
+                "<div class='col-sm-12 col-md-10'>"+
+                    "<textarea name='message' id='messager' rows='3' cols='40'></textarea>"+
+                    "<button type='button' id='replybtn' class='btn btn-default pd-3'>Submit</button>" +
+                    "<h5 class='mt-2' id='resultr'></h5>"+
+                "</div>"+
             "</div>"+
-            "<div class='col-sm-12 col-md-4'>"+
-                "<input name='name' style='width: 100%' type='text' id='namer'>"+
-           "</div>"+
         "</div>"+
-        "<div class='row'>"+
-            "<div class='col-md-2 mt-2'>"+
-                "<label for='messager'>Message*</label>"+
-            "</div>"+
-            "<div class='col-sm-12 col-md-10'>"+
-                "<textarea name='message' id='messager' rows='3' cols='40'></textarea>"+
-                "<button type='button' id='replybtn' class='btn btn-default pd-3'>Submit</button>" +
-                "<h5 class='mt-2' id='resultr'></h5>"+
-            "</div>"+
-        "</div>"+
-    "</div>"+
-"</form>";
+    "</form>";
 
-    if(id != oldid) {
-      $("#replybox" + oldid).slideUp();
-      $("#replybox" + oldid).empty();
-      $("#replybox" + id).append(its).css("display","none");
+    if(id != oldActiveFormId) {
+      $("#replybox" + oldActiveFormId).slideUp();
+      $("#replybox" + oldActiveFormId).empty();
+      $("#replybox" + id).append(ReplyForm).css("display","none");
       $("#replybox" + id).slideDown(); 
     } 
-    oldid = id;
+    oldActiveFormId = id;
 
     $("#replybtn").on("click", () => {
         if(validate(true)) {
